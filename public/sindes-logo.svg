@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 448" role="img" aria-label="Sindes-GV">
+  <g opacity="0.62">
+    <circle cx="198" cy="168" r="108" fill="#5D25AA"/>
+    <circle cx="168" cy="268" r="86" fill="#1E6FD9"/>
+    <circle cx="302" cy="158" r="80" fill="#FCB065"/>
+    <circle cx="314" cy="262" r="84" fill="#E84C6F"/>
+  </g>
+  <text x="256" y="412" text-anchor="middle" font-family="Inter, Arial, Helvetica, sans-serif" font-size="52" font-weight="700" letter-spacing="-0.03em" fill="#0E3A43">Sindes-GV</text>
+</svg>

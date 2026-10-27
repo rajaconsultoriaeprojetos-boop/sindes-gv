@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules", "lib/rescisao.test.ts", "lib/trct.test.ts", "lib/auditoria.test.ts", "lib/consistencia-interna-trct.test.ts", "lib/mesclar-leitura-trct.test.ts", "lib/atendimento.test.ts", "lib/convenios.test.ts", "lib/sessao.test.ts", "lib/validacao.test.ts", "lib/cms/texto-campo.test.ts", "lib/cms/validar-landing.test.ts"]
+}
