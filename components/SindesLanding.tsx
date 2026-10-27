@@ -289,14 +289,22 @@ export default function SindesLanding({ cms }: Props) {
           <div className="absolute inset-0">
             <Image
               src={HERO_IMAGE}
-              alt="Equipe de profissionais da saúde em plantão hospitalar"
+              alt="Equipe diversa de profissionais da saúde — enfermeiras, médicas e médicos em unidade hospitalar"
               fill
               priority
-              className="object-cover object-[center_32%]"
+              className="object-cover object-[center_42%] scale-105 sm:scale-100"
               sizes="100vw"
             />
             <div
-              className="absolute inset-0 bg-gradient-to-br from-[#0E3A43]/92 via-[#0E3A43]/78 to-[#1F8A70]/55"
+              className="absolute inset-0 bg-gradient-to-r from-[#0E3A43]/96 via-[#0E3A43]/78 to-[#0E3A43]/35"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute inset-0 bg-gradient-to-t from-[#0E3A43]/75 via-transparent to-[#1F8A70]/25"
+              aria-hidden="true"
+            />
+            <div
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,rgba(197,91,26,0.18),transparent_55%)]"
               aria-hidden="true"
             />
           </div>
@@ -309,8 +317,11 @@ export default function SindesLanding({ cms }: Props) {
                 Quem cuida de GV também precisa ter quem cuide dos seus direitos
               </h1>
               <p className="mt-5 max-w-xl text-base leading-7 text-white/90 sm:text-lg">
-                Plantão jurídico digital, auditoria de rescisão e denúncias seguras — três serviços
-                pensados para quem vive o plantão CLT na saúde.
+                <span className="font-medium text-white">
+                  Cuidar de quem cuida de Governador Valadares
+                </span>{ }
+                — plantão jurídico digital, auditoria de rescisão e denúncias seguras, feitos para
+                quem vive o plantão CLT na saúde.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link href="/portal" className={btnPrimary}>
