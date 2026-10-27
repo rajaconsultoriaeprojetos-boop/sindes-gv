@@ -43,7 +43,7 @@ const NAV = [
   { href: "#contato", rotulo: "Contato" },
 ] as const;
 
-const HERO_IMAGE = "/landing/hero-trabalhadores-saude.jpg";
+const HERO_IMAGE = "/landing/hero-equipe-saude-diversa.jpg";
 
 function protocoloLocal(prefixo: string): string {
   const buffer = new Uint32Array(1);
