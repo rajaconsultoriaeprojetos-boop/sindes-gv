@@ -33,6 +33,7 @@ import {
   rotuloClasse,
 } from "@/components/landing/plantao-theme";
 import { SINDES_WHATSAPP_URL } from "@/lib/whatsapp-sindes";
+import { SINDES_ENDERECO } from "@/lib/endereco-sindes";
 
 const NAV = [
   { href: "#inicio", rotulo: "Início" },
@@ -562,8 +563,8 @@ export default function SindesLanding({ cms }: Props) {
                 >
                   <h3 className="text-xl font-semibold">Agendar atendimento jurídico</h3>
                   <p className="mt-2 text-sm leading-6 text-[#0E3A43]/70">
-                    Horário de referência da sede: dias úteis, em Governador Valadares. Para fila oficial
-                    com validação, use o portal.
+                    Sede: {SINDES_ENDERECO.logradouro}, {SINDES_ENDERECO.cidadeUf} (CEP {SINDES_ENDERECO.cep}).
+                    Atendimento presencial em dias úteis; para fila oficial com validação, use o portal.
                   </p>
                   <Link
                     href="/atendimento"
@@ -923,10 +924,26 @@ export default function SindesLanding({ cms }: Props) {
           </div>
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-[0.14em]">Onde estamos</h2>
-            <p className="mt-3 flex flex-wrap items-start gap-2 text-sm leading-6">
-              <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>Governador Valadares — MG (endereço e horário da sede conforme comunicados oficiais)</span>
-            </p>
+            <address className="mt-3 not-italic">
+              <p className="flex items-start gap-2 text-sm leading-6">
+                <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>
+                  {SINDES_ENDERECO.logradouro}
+                  <br />
+                  {SINDES_ENDERECO.cidadeUf}
+                  <br />
+                  CEP {SINDES_ENDERECO.cep}
+                </span>
+              </p>
+              <a
+                href={SINDES_ENDERECO.mapsUrl}
+                className="mt-3 inline-flex min-h-11 items-center text-sm font-medium text-[#1F8A70] underline decoration-2 underline-offset-4 hover:text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver no Google Maps
+              </a>
+            </address>
             <a
               href={INSTAGRAM_PERFIL}
               className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-medium hover:text-white"

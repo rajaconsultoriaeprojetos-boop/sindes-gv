@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SINDES_ENDERECO } from "@/lib/endereco-sindes";
 
 export const metadata: Metadata = {
   title: "Termos de Privacidade — SINDES",
@@ -61,6 +62,13 @@ export default function Privacidade() {
         <h2 className="mt-8 text-xl font-semibold">Quando um TRCT sai do aparelho</h2>
         <p className="mt-3 text-base leading-7 text-slate-600">
           Se a assessoria enviar um TRCT na calculadora interna, o arquivo segue ao provedor de inteligência artificial somente quando uma chave desse provedor está configurada no servidor. Contracheque e documento com foto dos pedidos de jurídico e voucher não entram nessa leitura.
+        </p>
+
+        <h2 className="mt-8 text-xl font-semibold">Controlador e contato</h2>
+        <p className="mt-3 text-base leading-7 text-slate-600">
+          O sindicato, na qualidade de controlador dos dados tratados neste portal, está localizado em{" "}
+          <strong>{SINDES_ENDERECO.completo}</strong>. Para exercer seus direitos ou tirar dúvidas sobre
+          privacidade, procure a assessoria pelo portal, WhatsApp ou presencialmente na sede.
         </p>
 
         <h2 className="mt-8 text-xl font-semibold">Seus direitos</h2>
