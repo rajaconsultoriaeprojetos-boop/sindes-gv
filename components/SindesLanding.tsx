@@ -43,8 +43,7 @@ const NAV = [
   { href: "#contato", rotulo: "Contato" },
 ] as const;
 
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1920&q=80";
+const HERO_IMAGE = "/landing/hero-trabalhadores-saude.jpg";
 
 function protocoloLocal(prefixo: string): string {
   const buffer = new Uint32Array(1);
@@ -290,10 +289,10 @@ export default function SindesLanding({ cms }: Props) {
           <div className="absolute inset-0">
             <Image
               src={HERO_IMAGE}
-              alt="Profissionais de saúde ao fim de um plantão"
+              alt="Equipe de profissionais da saúde em plantão hospitalar"
               fill
               priority
-              className="object-cover object-center"
+              className="object-cover object-[center_32%]"
               sizes="100vw"
             />
             <div
