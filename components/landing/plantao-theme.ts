@@ -17,7 +17,7 @@ export const glassCard =
   "rounded-2xl border border-[rgba(14,58,67,0.1)] bg-white/75 shadow-[0_8px_32px_rgba(14,58,67,0.06)] backdrop-blur-md";
 
 export const btnPrimary =
-  "inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#F2A20C] px-5 text-sm font-semibold text-[#0E3A43] shadow-sm transition duration-200 hover:bg-[#E0940A] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0E3A43] focus-visible:ring-offset-2";
+  "inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#F2A20C] px-6 text-base font-semibold text-[#0E3A43] shadow-sm transition duration-200 hover:bg-[#E0940A] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0E3A43] focus-visible:ring-offset-2";
 
 export const btnSecondary =
-  "inline-flex min-h-12 items-center justify-center rounded-xl border border-[rgba(14,58,67,0.25)] bg-white/60 px-5 text-sm font-semibold text-[#0E3A43] backdrop-blur-sm transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F8A70] focus-visible:ring-offset-2";
+  "inline-flex min-h-12 items-center justify-center rounded-xl border border-[rgba(14,58,67,0.25)] bg-white/60 px-6 text-base font-semibold text-[#0E3A43] backdrop-blur-sm transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F8A70] focus-visible:ring-offset-2";

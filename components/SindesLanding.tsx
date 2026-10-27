@@ -66,14 +66,14 @@ function Marca({ sobreEscuro = false }: { sobreEscuro?: boolean }) {
       />
       <span className="min-w-0 text-left">
         <span
-          className={`block text-[15px] font-semibold leading-none tracking-tight ${
+          className={`block text-base font-semibold sm:text-lg leading-none tracking-tight ${
             sobreEscuro ? "text-white" : "text-[#0E3A43]"
           }`}
         >
           SINDES
         </span>
         <span
-          className={`mt-1 block whitespace-nowrap text-[10px] font-medium uppercase leading-none tracking-[0.14em] ${
+          className={`mt-1 block whitespace-nowrap text-[11px] sm:text-xs font-medium uppercase leading-none tracking-[0.14em] ${
             sobreEscuro ? "text-white/75" : "text-[#0E3A43]/60"
           }`}
         >
@@ -210,7 +210,7 @@ export default function SindesLanding({ cms }: Props) {
       </a>
 
       <header className="sticky top-0 z-50 border-b border-[rgba(14,58,67,0.08)] bg-[#F7FAF9]/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
+        <div className="mx-auto flex h-[4.25rem] max-w-7xl sm:h-[4.75rem] items-center justify-between gap-3 px-4">
           <a
             href="#inicio"
             className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F8A70] focus-visible:ring-offset-2"
@@ -224,7 +224,7 @@ export default function SindesLanding({ cms }: Props) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="rounded-md text-sm font-medium text-[#0E3A43]/75 transition hover:text-[#0E3A43]"
+                  className="rounded-md text-base font-medium text-[#0E3A43]/75 transition hover:text-[#0E3A43]"
                 >
                   {item.rotulo}
                 </Link>
@@ -232,7 +232,7 @@ export default function SindesLanding({ cms }: Props) {
                 <a
                   key={item.href}
                   href={item.href}
-                  className="rounded-md text-sm font-medium text-[#0E3A43]/75 transition hover:text-[#0E3A43]"
+                  className="rounded-md text-base font-medium text-[#0E3A43]/75 transition hover:text-[#0E3A43]"
                 >
                   {item.rotulo}
                 </a>
@@ -286,7 +286,7 @@ export default function SindesLanding({ cms }: Props) {
       </header>
 
       <main>
-        <section id="inicio" tabIndex={-1} className="relative scroll-mt-20 overflow-hidden">
+        <section id="inicio" tabIndex={-1} className="relative scroll-mt-20 overflow-hidden min-h-[min(88vh,920px)]">
           <div className="absolute inset-0">
             <Image
               src={HERO_IMAGE}
@@ -309,22 +309,22 @@ export default function SindesLanding({ cms }: Props) {
               aria-hidden="true"
             />
           </div>
-          <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 py-16 sm:py-24 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-6 lg:py-28">
+          <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10 lg:py-32 xl:px-8">
             <div className="order-2 lg:order-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/85 sm:text-base">
                 Sindicato dos Trabalhadores da Saúde de Governador Valadares
               </p>
-              <h1 className="mt-4 max-w-2xl text-3xl font-bold leading-tight tracking-tight text-white text-balance sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
+              <h1 className="mt-5 max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight text-white text-balance sm:text-5xl lg:text-[3.35rem] xl:text-6xl">
                 Quem cuida de GV também precisa ter quem cuide dos seus direitos
               </h1>
-              <p className="mt-5 max-w-xl text-base leading-7 text-white/90 sm:text-lg">
-                <span className="font-medium text-white">
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/92 sm:text-xl sm:leading-9">
+                <span className="font-semibold text-white">
                   Cuidar de quem cuida de Governador Valadares
-                </span>{ }
+                </span>{" "}
                 — plantão jurídico digital, auditoria de rescisão e denúncias seguras, feitos para
                 quem vive o plantão CLT na saúde.
               </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
                 <Link href="/portal" className={btnPrimary}>
                   Falar com a assessoria
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -367,8 +367,8 @@ export default function SindesLanding({ cms }: Props) {
         <section id="servicos" tabIndex={-1} className="scroll-mt-20 px-4 py-16 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <ScrollReveal>
-              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Serviços protagonistas</h2>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-[#0E3A43]/75">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Serviços protagonistas</h2>
+              <p className="mt-4 max-w-3xl text-lg leading-8 text-[#0E3A43]/75 sm:text-xl sm:leading-9">
                 Três caminhos claros. Toque em &quot;Como funciona&quot; para ver o passo a passo ou vá direto
                 à ferramenta.
               </p>
@@ -380,8 +380,8 @@ export default function SindesLanding({ cms }: Props) {
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#1F8A70]/12 text-[#1F8A70]">
                       <s.icon className="h-6 w-6" aria-hidden="true" />
                     </span>
-                    <h3 className="mt-4 text-lg font-semibold">{s.titulo}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[#0E3A43]/70">{s.descricao}</p>
+                    <h3 className="mt-4 text-xl font-semibold sm:text-2xl">{s.titulo}</h3>
+                    <p className="mt-3 text-base leading-7 text-[#0E3A43]/70 sm:text-lg sm:leading-8">{s.descricao}</p>
                     <ol className="mt-4 flex flex-wrap gap-2">
                       {s.passos.map((passo, idx) => (
                         <li
@@ -456,9 +456,9 @@ export default function SindesLanding({ cms }: Props) {
         <section id="convenios" tabIndex={-1} className="scroll-mt-20 border-y border-[rgba(14,58,67,0.08)] bg-white/50 px-4 py-16">
           <div className="mx-auto max-w-6xl">
             <ScrollReveal>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#1F8A70]">Convênios</p>
-              <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Descontos para quem está no plantão</h2>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-[#0E3A43]/70">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1F8A70] sm:text-base">Convênios</p>
+              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Descontos para quem está no plantão</h2>
+              <p className="mt-4 max-w-3xl text-lg leading-8 text-[#0E3A43]/70 sm:text-xl sm:leading-9">
                 Farmácia, psicologia, clube, academia, estética e ótica. Parceiros publicados pela
                 administração aparecem na vitrine.
               </p>
@@ -472,8 +472,8 @@ export default function SindesLanding({ cms }: Props) {
         <section id="confianca" tabIndex={-1} className="scroll-mt-20 px-4 py-16 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <ScrollReveal>
-              <h2 className="text-2xl font-bold sm:text-3xl">Quem somos e por que confiar</h2>
-              <p className="mt-3 max-w-2xl text-[#0E3A43]/75">
+              <h2 className="text-3xl font-bold sm:text-4xl">Quem somos e por que confiar</h2>
+              <p className="mt-4 max-w-3xl text-lg leading-8 text-[#0E3A43]/75 sm:text-xl">
                 Representação sindical na saúde pública e privada de Governador Valadares — SUS e hospitais
                 conveniados.
               </p>
@@ -482,7 +482,7 @@ export default function SindesLanding({ cms }: Props) {
             {conquistas.length > 0 ? (
               <ScrollReveal className="mt-10">
                 <div className={`${glassCard} p-6 sm:p-8`}>
-                  <h3 className="text-lg font-semibold">Linha do tempo de conquistas</h3>
+                  <h3 className="text-xl font-semibold sm:text-2xl">Linha do tempo de conquistas</h3>
                   <ul className="mt-4 space-y-4 border-l-2 border-[#1F8A70]/30 pl-4 sm:columns-2 sm:gap-8">
                     {conquistas.map((item, idx) => (
                       <li key={`${item.ano}-${idx}`} className="break-inside-avoid pb-2">
@@ -538,11 +538,11 @@ export default function SindesLanding({ cms }: Props) {
         <section id="portal" tabIndex={-1} className="scroll-mt-20 px-4 py-16 sm:py-20">
           <div className="mx-auto max-w-6xl">
             <ScrollReveal>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#1F8A70]">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1F8A70] sm:text-base">
                 Área do trabalhador
               </p>
-              <h2 className="mt-2 text-2xl font-bold sm:text-3xl">Portal, plantão e denúncia</h2>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-[#0E3A43]/75">
+              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Portal, plantão e denúncia</h2>
+              <p className="mt-4 max-w-3xl text-lg leading-8 text-[#0E3A43]/75 sm:text-xl sm:leading-9">
                 Atendimento identificado no portal (persiste neste servidor). Agendamento rápido e denúncia
                 anônima nesta página, em superfícies amplas e tranquilas.
               </p>
@@ -561,8 +561,8 @@ export default function SindesLanding({ cms }: Props) {
                   tabIndex={-1}
                   className={`scroll-mt-24 ${glassCard} p-6 sm:p-8`}
                 >
-                  <h3 className="text-xl font-semibold">Agendar atendimento jurídico</h3>
-                  <p className="mt-2 text-sm leading-6 text-[#0E3A43]/70">
+                  <h3 className="text-2xl font-semibold">Agendar atendimento jurídico</h3>
+                  <p className="mt-3 text-base leading-7 text-[#0E3A43]/70 sm:text-lg sm:leading-8">
                     Sede: {SINDES_ENDERECO.logradouro}, {SINDES_ENDERECO.cidadeUf} (CEP {SINDES_ENDERECO.cep}).
                     Atendimento presencial em dias úteis; para fila oficial com validação, use o portal.
                   </p>
@@ -576,7 +576,7 @@ export default function SindesLanding({ cms }: Props) {
                     <div className="mt-6 rounded-xl border border-[#1F8A70]/20 bg-white/90 p-5" role="status">
                       <p className="text-sm font-semibold">Pedido registrado nesta tela</p>
                       <p className="mt-2 text-2xl font-bold tracking-tight">{protocoloAgenda}</p>
-                      <p className="mt-2 text-sm leading-6 text-[#0E3A43]/70">
+                      <p className="mt-3 text-base leading-7 text-[#0E3A43]/70 sm:text-lg sm:leading-8">
                         Nenhum dado foi enviado. Feche a aba e o protocolo some. Quando o canal oficial
                         estiver no ar, um atendente poderá retornar de fato.
                       </p>
@@ -680,16 +680,16 @@ export default function SindesLanding({ cms }: Props) {
                 >
                   <div className="flex items-center gap-2">
                     <ShieldAlert className="h-5 w-5 text-[#1F8A70]" aria-hidden="true" />
-                    <h3 className="text-xl font-semibold">Denúncias anônimas</h3>
+                    <h3 className="text-2xl font-semibold">Denúncias anônimas</h3>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-[#0E3A43]/70">
+                  <p className="mt-3 text-base leading-7 text-[#0E3A43]/70 sm:text-lg sm:leading-8">
                     Sem campo de nome. Não escreva nome de paciente, prontuário ou outro dado de saúde.
                   </p>
                   {protocoloDenuncia ? (
                     <div className="mt-6 rounded-xl border border-[#1F8A70]/20 bg-white/90 p-5" role="status">
                       <p className="text-sm font-semibold">Relato guardado só nesta aba</p>
                       <p className="mt-2 text-2xl font-bold tracking-tight">{protocoloDenuncia}</p>
-                      <p className="mt-2 text-sm leading-6 text-[#0E3A43]/70">
+                      <p className="mt-3 text-base leading-7 text-[#0E3A43]/70 sm:text-lg sm:leading-8">
                         A denúncia não foi transmitida. Use o canal presencial da sede quando precisar que
                         a diretoria apure o fato.
                       </p>
@@ -821,7 +821,7 @@ export default function SindesLanding({ cms }: Props) {
                       {n.tipo} · {n.data}
                     </p>
                     <p className="mt-2 font-semibold">{n.titulo}</p>
-                    <p className="mt-2 text-sm leading-6 text-[#0E3A43]/70">{n.resumo}</p>
+                    <p className="mt-3 text-base leading-7 text-[#0E3A43]/70 sm:text-lg sm:leading-8">{n.resumo}</p>
                     <a
                       href={n.href}
                       target="_blank"
