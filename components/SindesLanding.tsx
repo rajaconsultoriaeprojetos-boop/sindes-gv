@@ -19,12 +19,13 @@ import EcgDivider from "@/components/landing/EcgDivider";
 import HeroLogoOrbit from "@/components/landing/HeroLogoOrbit";
 import ImpactStat from "@/components/landing/ImpactStat";
 import InstagramFollowBand from "@/components/landing/InstagramFollowBand";
+import VideoDestaqueEmbed from "@/components/landing/VideoDestaqueEmbed";
 import WhatsAppFab from "@/components/landing/WhatsAppFab";
 import ScrollReveal from "@/components/landing/ScrollReveal";
 import ServiceDetailModal from "@/components/landing/ServiceDetailModal";
 import { INSTAGRAM_PERFIL } from "@/components/landing/conteudo-instagram";
 import type { LandingCms } from "@/lib/cms/landing-model";
-import { parseValorImpacto } from "@/lib/cms/validar-landing";
+import { parseValorImpacto, videoDestaqueAtivo } from "@/lib/cms/validar-landing";
 import {
   btnPrimary,
   btnSecondary,
@@ -102,7 +103,9 @@ export default function SindesLanding({ cms }: Props) {
   const conquistas = cms?.conquistasLinhaDoTempo ?? [];
   const depoimentos = cms?.depoimentos ?? [];
   const impactStats = cms?.impactStats ?? [];
-  const temNoticiasOuCct = destaquesCct.length > 0 || noticias.length > 0;
+  const videoDestaque = cms?.videoDestaque;
+  const temVideoDestaque = videoDestaqueAtivo(videoDestaque);
+  const temNoticiasOuCct = destaquesCct.length > 0 || noticias.length > 0 || temVideoDestaque;
   const [menuAberto, setMenuAberto] = useState(false);
   const [servicoModal, setServicoModal] = useState<ServicoModal>(null);
 
@@ -781,6 +784,18 @@ export default function SindesLanding({ cms }: Props) {
                 Notícias e destaques de CCT serão publicados aqui pela administração. Enquanto isso, use o Instagram
                 oficial do sindicato.
               </AvisoSecaoVazia>
+            ) : null}
+
+            {temVideoDestaque && videoDestaque ? (
+              <ScrollReveal>
+                <VideoDestaqueEmbed
+                  url={videoDestaque.url}
+                  titulo={videoDestaque.titulo}
+                  data={videoDestaque.data}
+                  legenda={videoDestaque.legenda}
+                  confirmar={videoDestaque.confirmar}
+                />
+              </ScrollReveal>
             ) : null}
 
             <div className="mt-8 grid gap-5 lg:grid-cols-2">

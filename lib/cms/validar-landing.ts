@@ -1,4 +1,9 @@
-import type { ImpactStatCms, LandingCms } from "./landing-model";
+import type { ImpactStatCms, LandingCms, VideoDestaqueCms } from "./landing-model";
+import {
+  classificarUrlVideoDestaque,
+  normalizarPermalinkInstagram,
+  urlVideoDestaqueValida,
+} from "@/lib/instagram-embed";
 import { INSTAGRAM_PERFIL, type DestaqueCct, type NoticiaFeed } from "@/components/landing/conteudo-instagram";
 
 import {
@@ -142,7 +147,7 @@ export function isErroImpactStatObj(v: ErroImpactStat | ErroCampoLista | null | 
 }
 
 export type ErroCampoLista = {
-  lista: "noticias" | "conquistasLinhaDoTempo" | "depoimentos" | "destaquesCct";
+  lista: "noticias" | "conquistasLinhaDoTempo" | "depoimentos" | "destaquesCct" | "videoDestaque";
   indice: number;
   rotuloCard: string;
   campos: Record<string, string>;
@@ -264,6 +269,97 @@ export function validarDepoimentos(lista: LandingCms["depoimentos"]): ErroCampoL
   return null;
 }
 
+export function coercVideoDestaque(raw: VideoDestaqueCms | Record<string, unknown> | undefined): VideoDestaqueCms {
+  const r = (raw ?? {}) as Record<string, unknown>;
+  return {
+    url: asTextoCampo(r.url),
+    titulo: asTextoCampo(r.titulo),
+    data: asTextoCampo(r.data),
+    legenda: asTextoCampo(r.legenda),
+    confirmar: typeof r.confirmar === "boolean" ? r.confirmar : undefined,
+  };
+}
+
+function trimVideoDestaque(v: VideoDestaqueCms): VideoDestaqueCms {
+  const c = coercVideoDestaque(v);
+  return {
+    ...c,
+    url: trimExternoTexto(c.url),
+    titulo: trimExternoTexto(c.titulo),
+    data: trimExternoTexto(c.data),
+    legenda: trimExternoTexto(c.legenda),
+  };
+}
+
+export function videoDestaqueVazio(v: VideoDestaqueCms) {
+  return !trimVideoDestaque(v).url;
+}
+
+export function videoDestaqueAtivo(v: VideoDestaqueCms | undefined) {
+  return Boolean(v?.url?.trim());
+}
+
+function completarVideoDestaqueParaSalvar(v: VideoDestaqueCms): VideoDestaqueCms {
+  const t = trimVideoDestaque(v);
+  if (videoDestaqueVazio(t)) {
+    return { url: "", titulo: "", data: "", legenda: "", confirmar: undefined };
+  }
+  const tipo = classificarUrlVideoDestaque(t.url);
+  const url = tipo === "instagram" ? normalizarPermalinkInstagram(t.url) : t.url.trim();
+  return { ...t, url, confirmar: t.confirmar || undefined };
+}
+
+export function validarVideoDestaque(bruto: VideoDestaqueCms): ErroCampoLista | null {
+  const v = trimVideoDestaque(bruto);
+  if (videoDestaqueVazio(v)) return null;
+
+  const campos: Record<string, string> = {};
+  if (!urlVideoDestaqueValida(v.url)) {
+    campos.url =
+      "Use um link de reel ou post do Instagram, ou uma URL HTTPS de arquivo .mp4. Deixe o link vazio para ocultar o vídeo.";
+  }
+  const errTitulo = v.titulo
+    ? mensagemTextoCampo(v.titulo, MAX_TITULO_NOTICIA, {
+        vazio: "",
+        longo: (max) => `Título muito longo (máximo ${max} caracteres).`,
+      })
+    : null;
+  if (errTitulo) campos.titulo = errTitulo;
+  const errData = v.data
+    ? mensagemTextoCampo(v.data, MAX_DATA_NOTICIA, {
+        vazio: "",
+        longo: (max) => `Data/rótulo muito longo (máximo ${max} caracteres).`,
+      })
+    : null;
+  if (errData) campos.data = errData;
+  const errLegenda = v.legenda
+    ? mensagemTextoCampo(v.legenda, MAX_RESUMO_NOTICIA, {
+        vazio: "",
+        longo: (max) => `Legenda muito longa (máximo ${max} caracteres).`,
+      })
+    : null;
+  if (errLegenda) campos.legenda = errLegenda;
+
+  if (Object.keys(campos).length > 0) {
+    const focoId =
+      campos.url !== undefined
+        ? "vd-url"
+        : campos.titulo !== undefined
+          ? "vd-tit"
+          : campos.data !== undefined
+            ? "vd-data"
+            : "vd-leg";
+    return {
+      lista: "videoDestaque",
+      indice: 0,
+      rotuloCard: "Vídeo do dia",
+      campos,
+      focoId,
+    };
+  }
+  return null;
+}
+
 export function validarDestaquesCct(lista: DestaqueCct[]): ErroCampoLista | null {
   for (const [i, bruto] of lista.entries()) {
     if (cctVazio(bruto)) continue;
@@ -290,6 +386,8 @@ export function validarLandingCmsFormulario(dados: LandingCms): ErroImpactStat |
   if (impacto) return impacto;
   const noticias = validarNoticias(dados.noticias ?? []);
   if (noticias) return noticias;
+  const video = validarVideoDestaque(dados.videoDestaque ?? coercVideoDestaque(undefined));
+  if (video) return video;
   return (
     validarConquistas(dados.conquistasLinhaDoTempo ?? []) ??
     validarDepoimentos(dados.depoimentos ?? []) ??
@@ -305,6 +403,7 @@ export function normalizarLandingCmsParaSalvar(dados: LandingCms): LandingCms {
     depoimentos: limparDepoimentosVazios(dados.depoimentos ?? []),
     destaquesCct: limparCctVazios(dados.destaquesCct ?? []),
     noticias: limparNoticiasVazias((dados.noticias ?? []).map(completarNoticiaParaSalvar)),
+    videoDestaque: completarVideoDestaqueParaSalvar(dados.videoDestaque ?? coercVideoDestaque(undefined)),
   };
 }
 

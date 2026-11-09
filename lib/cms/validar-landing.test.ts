@@ -80,3 +80,61 @@ describe("CMS notícias persistência", () => {
     assert.equal(lista[0]?.titulo, "Ok");
   });
 });
+
+describe("CMS vídeo do dia", () => {
+  it("URL vazia passa validação e não grava destaque", () => {
+    const base = landingCmsPadrao();
+    const dados = {
+      ...base,
+      videoDestaque: { url: "", titulo: "", data: "", legenda: "" },
+    };
+    assert.equal(validarLandingCmsFormulario(dados), null);
+    const salvo = normalizarLandingCmsParaSalvar(dados);
+    assert.equal(salvo.videoDestaque.url, "");
+  });
+
+  it("aceita reel Instagram (normaliza /reels/)", () => {
+    const base = landingCmsPadrao();
+    const dados = {
+      ...base,
+      videoDestaque: {
+        url: "https://www.instagram.com/reels/DfgDl0QgZF5/",
+        titulo: "Plantão",
+        data: "Nov/2026",
+        legenda: "",
+      },
+    };
+    assert.equal(validarLandingCmsFormulario(dados), null);
+    const salvo = normalizarLandingCmsParaSalvar(dados);
+    assert.equal(salvo.videoDestaque.url, "https://www.instagram.com/reel/DfgDl0QgZF5/");
+  });
+
+  it("aceita MP4 HTTPS", () => {
+    const base = landingCmsPadrao();
+    const dados = {
+      ...base,
+      videoDestaque: {
+        url: "https://cdn.example.com/clipe.mp4",
+        titulo: "",
+        data: "",
+        legenda: "",
+      },
+    };
+    assert.equal(validarLandingCmsFormulario(dados), null);
+  });
+
+  it("rejeita URL inválida", () => {
+    const base = landingCmsPadrao();
+    const dados = {
+      ...base,
+      videoDestaque: {
+        url: "https://youtube.com/watch?v=abc",
+        titulo: "",
+        data: "",
+        legenda: "",
+      },
+    };
+    const err = validarLandingCmsFormulario(dados);
+    assert.ok(err && typeof err === "object" && "lista" in err && err.lista === "videoDestaque");
+  });
+});

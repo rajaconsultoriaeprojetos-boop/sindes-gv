@@ -182,6 +182,7 @@ export default function CmsLandingEditor({ role, email }: Props) {
   }
 
   function idCardLista(lista: ErroCampoLista["lista"], indice: number) {
+    if (lista === "videoDestaque") return "video-destaque-card";
     if (lista === "noticias") return `noticia-card-${indice}`;
     if (lista === "conquistasLinhaDoTempo") return `conq-card-${indice}`;
     if (lista === "depoimentos") return `dep-card-${indice}`;
@@ -796,6 +797,103 @@ export default function CmsLandingEditor({ role, email }: Props) {
 
       <Secao
         ordem={5}
+        titulo="Vídeo do dia"
+        descricao='Destaque embutido no topo da seção Notícias na landing — acima do grid de CCT e do feed.'
+      >
+        {(() => {
+          const v = dados.videoDestaque;
+          const errosVd = erroLista?.lista === "videoDestaque" ? erroLista.campos : null;
+          return (
+            <div
+              id="video-destaque-card"
+              className={`rounded-xl border bg-white/90 p-4 ${
+                errosVd ? "border-red-400 ring-2 ring-red-200" : "border-[rgba(14,58,67,0.12)]"
+              }`}
+            >
+              <p className="text-sm text-[#0E3A43]/75">
+                Cole o link de um reel ou post do Instagram, ou uma URL HTTPS de arquivo <code className="text-xs">.mp4</code>.
+                Deixe o link vazio para não exibir vídeo na página inicial.
+              </p>
+              <label className={`${rotuloClasse} mt-4`} htmlFor="vd-url">
+                URL do vídeo (Instagram ou MP4)
+              </label>
+              <input
+                id="vd-url"
+                type="url"
+                className={`${campoClasse} ${errosVd?.url ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                value={v.url}
+                placeholder="https://www.instagram.com/reel/… ou https://…/video.mp4"
+                onChange={(e) =>
+                  atualizar((p) => ({
+                    ...p,
+                    videoDestaque: { ...p.videoDestaque, url: e.target.value },
+                  }))
+                }
+              />
+              {errosVd?.url ? <p className="mt-1 text-sm text-red-800">{errosVd.url}</p> : null}
+              <label className={`${rotuloClasse} mt-3`} htmlFor="vd-tit">
+                Título (opcional)
+              </label>
+              <input
+                id="vd-tit"
+                className={`${campoClasse} ${errosVd?.titulo ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                value={v.titulo}
+                onChange={(e) =>
+                  atualizar((p) => ({
+                    ...p,
+                    videoDestaque: { ...p.videoDestaque, titulo: e.target.value },
+                  }))
+                }
+              />
+              {errosVd?.titulo ? <p className="mt-1 text-sm text-red-800">{errosVd.titulo}</p> : null}
+              <label className={`${rotuloClasse} mt-3`} htmlFor="vd-data">
+                Data ou rótulo (opcional)
+              </label>
+              <input
+                id="vd-data"
+                className={`${campoClasse} ${errosVd?.data ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                value={v.data}
+                onChange={(e) =>
+                  atualizar((p) => ({
+                    ...p,
+                    videoDestaque: { ...p.videoDestaque, data: e.target.value },
+                  }))
+                }
+              />
+              {errosVd?.data ? <p className="mt-1 text-sm text-red-800">{errosVd.data}</p> : null}
+              <label className={`${rotuloClasse} mt-3`} htmlFor="vd-leg">
+                Legenda abaixo do vídeo (opcional)
+              </label>
+              <textarea
+                id="vd-leg"
+                rows={3}
+                className={`${campoClasse} min-h-[4rem] py-2 ${errosVd?.legenda ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                value={v.legenda}
+                onChange={(e) =>
+                  atualizar((p) => ({
+                    ...p,
+                    videoDestaque: { ...p.videoDestaque, legenda: e.target.value },
+                  }))
+                }
+              />
+              {errosVd?.legenda ? <p className="mt-1 text-sm text-red-800">{errosVd.legenda}</p> : null}
+              <CheckboxConfirmar
+                idFor="vd-conf"
+                checked={!!v.confirmar}
+                onChange={(marcado) =>
+                  atualizar((p) => ({
+                    ...p,
+                    videoDestaque: { ...p.videoDestaque, confirmar: marcado },
+                  }))
+                }
+              />
+            </div>
+          );
+        })()}
+      </Secao>
+
+      <Secao
+        ordem={6}
         titulo="Feed de notícias"
         descricao='Mesma seção de notícias — cartões menores com link "Ver no Instagram" ou outra URL.'
       >
@@ -964,7 +1062,7 @@ export default function CmsLandingEditor({ role, email }: Props) {
       </Secao>
 
       <Secao
-        ordem={6}
+        ordem={7}
         titulo="Conteúdo fixo no site (não editável aqui)"
         descricao="Estes blocos continuam no código da landing; alterações exigem suporte técnico."
       >

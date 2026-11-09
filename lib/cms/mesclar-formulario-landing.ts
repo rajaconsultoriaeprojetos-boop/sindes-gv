@@ -1,5 +1,5 @@
 import type { LandingCms } from "./landing-model";
-import { coercNoticia } from "./validar-landing";
+import { coercNoticia, coercVideoDestaque } from "./validar-landing";
 
 /** Lê valores visíveis do formulário (evita validar state React desatualizado após colar). */
 export function mesclarNoticiasDoDom(estado: LandingCms): LandingCms {
@@ -23,7 +23,26 @@ export function mesclarNoticiasDoDom(estado: LandingCms): LandingCms {
   return { ...estado, noticias };
 }
 
+export function mesclarVideoDestaqueDoDom(estado: LandingCms): LandingCms {
+  const base = coercVideoDestaque(estado.videoDestaque);
+  if (typeof document === "undefined") {
+    return { ...estado, videoDestaque: base };
+  }
+  const url = document.getElementById("vd-url");
+  const titulo = document.getElementById("vd-tit");
+  const data = document.getElementById("vd-data");
+  const legenda = document.getElementById("vd-leg");
+  const videoDestaque = {
+    ...base,
+    url: url instanceof HTMLInputElement ? url.value : base.url,
+    titulo: titulo instanceof HTMLInputElement ? titulo.value : base.titulo,
+    data: data instanceof HTMLInputElement ? data.value : base.data,
+    legenda: legenda instanceof HTMLTextAreaElement ? legenda.value : base.legenda,
+  };
+  return { ...estado, videoDestaque };
+}
+
 /** Estado que o usuário vê no momento de publicar (DOM + coerção de campos). */
 export function prepararLandingParaPublicar(estado: LandingCms): LandingCms {
-  return mesclarNoticiasDoDom(estado);
+  return mesclarVideoDestaqueDoDom(mesclarNoticiasDoDom(estado));
 }
