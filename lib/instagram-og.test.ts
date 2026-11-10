@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { extrairImagemOgDoHtml, validarParamInstagramThumb } from "./instagram-og.ts";
+import { extrairImagemOgDoHtml, validarParamInstagramThumb } from "./instagram-og";
 
 describe("extrairImagemOgDoHtml", () => {
   it("lê og:image", () => {

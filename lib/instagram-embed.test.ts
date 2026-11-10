@@ -5,7 +5,7 @@ import {
   isPermalinkInstagram,
   normalizarPermalinkInstagram,
   urlVideoDestaqueValida,
-} from "./instagram-embed.ts";
+} from "./instagram-embed";
 
 describe("normalizarPermalinkInstagram", () => {
   it("converte /reels/ para /reel/", () => {

@@ -1,4 +1,4 @@
-import { isPermalinkInstagram, normalizarPermalinkInstagram } from "./instagram-embed.ts";
+import { isPermalinkInstagram, normalizarPermalinkInstagram } from "./instagram-embed";
 
 const META_OG_IMAGE = /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i;
 const META_OG_IMAGE_REV = /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i;
