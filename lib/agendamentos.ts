@@ -5,6 +5,7 @@ import { slotAindaDisponivel } from "./slots-agendamento";
 import type { TipoAgendamento } from "./tipos-agendamento";
 import { criarEventoAgendamento } from "./google-calendar";
 import { sincronizarAgendamentoPlanilha, sincronizarTrabalhadorPlanilha } from "./google-sheets-sync";
+import { enviarEmailNovoAgendamentoAdmin } from "./email-admin-agendamento";
 
 export type Agendamento = {
   id: string;
@@ -158,7 +159,10 @@ export function reservarAgendamento(entrada: EntradaAgendamento) {
     void sincronizarTrabalhadorPlanilha(registro);
     void sincronizarAgendamentoPlanilha(registro);
 
-    return { ok: true as const, agendamento: resumir(registro) };
+    const resumo = resumir(registro);
+    void enviarEmailNovoAgendamentoAdmin(resumo);
+
+    return { ok: true as const, agendamento: resumo };
   });
 }
 
