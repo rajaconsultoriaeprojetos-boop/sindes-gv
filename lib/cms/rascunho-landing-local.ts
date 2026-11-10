@@ -1,4 +1,4 @@
-import type { LandingCms } from "./landing-model";
+import { mesclarLandingCms, type LandingCms } from "./landing-model";
 
 const CHAVE = "sindes:cms:landing:rascunho:v1";
 
@@ -19,7 +19,10 @@ export function lerRascunhoLandingLocal(): RascunhoLandingLocal | null {
     if (!bruto) return null;
     const parsed = JSON.parse(bruto) as RascunhoLandingLocal;
     if (!parsed?.dados || typeof parsed.salvoEm !== "string") return null;
-    return parsed;
+    return {
+      ...parsed,
+      dados: mesclarLandingCms(parsed.dados),
+    };
   } catch {
     return null;
   }

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { DestaqueCct, NoticiaFeed } from "@/components/landing/conteudo-instagram";
 import { INSTAGRAM_PERFIL } from "@/components/landing/conteudo-instagram";
 import { btnPrimary, btnSecondary, campoClasse, glassCard, rotuloClasse } from "@/components/landing/plantao-theme";
-import { landingCmsPadrao, type LandingCms } from "@/lib/cms/landing-model";
+import { landingCmsPadrao, mesclarLandingCms, type LandingCms } from "@/lib/cms/landing-model";
 import { prepararLandingParaPublicar } from "@/lib/cms/mesclar-formulario-landing";
 import {
   MAX_RESUMO_NOTICIA,
@@ -121,19 +121,20 @@ export default function CmsLandingEditor({ role, email }: Props) {
           const msg = await mensagemErroRespostaApi(resposta, "Não foi possível carregar o CMS.");
           if (!vivo) return;
           if (rascunho) {
-            setDados(rascunho.dados);
-            setJsonAvancado(JSON.stringify(rascunho.dados, null, 2));
+            const merged = mesclarLandingCms(rascunho.dados);
+            setDados(merged);
+            setJsonAvancado(JSON.stringify(merged, null, 2));
             setErro(`${msg} Rascunho local restaurado neste navegador.`);
           } else {
             setErro(msg);
           }
           return;
         }
-        const cms = (await resposta.json()) as LandingCms;
+        const cms = mesclarLandingCms((await resposta.json()) as Partial<LandingCms>);
         if (!vivo) return;
         servidorAtualizadoEmRef.current = cms.atualizadoEm ?? "";
         const usarRascunho = rascunho && preferirRascunhoLocal(rascunho, cms);
-        const exibir = usarRascunho ? rascunho!.dados : cms;
+        const exibir = mesclarLandingCms(usarRascunho ? rascunho!.dados : cms);
         if (usarRascunho) {
           setErro(
             "Rascunho local restaurado (ainda não publicado no servidor). Revise e clique em Publicar alterações.",
@@ -145,8 +146,9 @@ export default function CmsLandingEditor({ role, email }: Props) {
       } catch {
         if (!vivo) return;
         if (rascunho) {
-          setDados(rascunho.dados);
-          setJsonAvancado(JSON.stringify(rascunho.dados, null, 2));
+          const merged = mesclarLandingCms(rascunho.dados);
+          setDados(merged);
+          setJsonAvancado(JSON.stringify(merged, null, 2));
           setErro("Falha de rede ao carregar — rascunho local restaurado.");
         } else {
           setErro("Não foi possível carregar o conteúdo da landing.");
@@ -273,7 +275,9 @@ export default function CmsLandingEditor({ role, email }: Props) {
         focarFeedbackPublicacao();
         return;
       }
-      const salvo = normalizarLandingCmsParaSalvar((await resposta.json()) as LandingCms);
+      const salvo = mesclarLandingCms(
+        normalizarLandingCmsParaSalvar((await resposta.json()) as LandingCms),
+      );
       servidorAtualizadoEmRef.current = salvo.atualizadoEm ?? "";
       setDados(salvo);
       setJsonAvancado(JSON.stringify(salvo, null, 2));
@@ -317,7 +321,7 @@ export default function CmsLandingEditor({ role, email }: Props) {
         setErro(await mensagemErroRespostaApi(resposta, "Não foi possível publicar o JSON."));
         return;
       }
-      const salvo = (await resposta.json()) as LandingCms;
+      const salvo = mesclarLandingCms((await resposta.json()) as Partial<LandingCms>);
       servidorAtualizadoEmRef.current = salvo.atualizadoEm ?? "";
       setDados(salvo);
       setJsonAvancado(JSON.stringify(salvo, null, 2));
