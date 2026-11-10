@@ -29,12 +29,20 @@ export default function PaginaAtendimento() {
         <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
           Abra o portal, informe nome, CPF e o assunto, e aceite guardar esses dados neste servidor para esta consulta. A sala, as notas e o chat usam o registro criado ali.
         </p>
-        <Link
-          href="/portal"
-          className="mt-8 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#FCB065] px-4 text-base font-semibold text-[#1D0D2C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1D0D2C] focus-visible:ring-offset-2"
-        >
-          Ir ao portal do trabalhador
-        </Link>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Link
+            href="/portal?tipo=juridico"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#FCB065] px-4 text-base font-semibold text-[#1D0D2C] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1D0D2C] focus-visible:ring-offset-2"
+          >
+            Agendar assessoria jurídica
+          </Link>
+          <Link
+            href="/portal"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-base font-semibold text-[#1D0D2C]"
+          >
+            Outros serviços no portal
+          </Link>
+        </div>
       </div>
     </main>
   );

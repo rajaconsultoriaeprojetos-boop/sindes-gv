@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "lib/rescisao.test.ts", "lib/trct.test.ts", "lib/auditoria.test.ts", "lib/consistencia-interna-trct.test.ts", "lib/mesclar-leitura-trct.test.ts", "lib/atendimento.test.ts", "lib/convenios.test.ts", "lib/sessao.test.ts", "lib/validacao.test.ts", "lib/cms/texto-campo.test.ts", "lib/cms/validar-landing.test.ts"]
+  "exclude": ["node_modules", "lib/rescisao.test.ts", "lib/trct.test.ts", "lib/auditoria.test.ts", "lib/consistencia-interna-trct.test.ts", "lib/mesclar-leitura-trct.test.ts", "lib/atendimento.test.ts", "lib/convenios.test.ts", "lib/sessao.test.ts", "lib/validacao.test.ts", "lib/agendamentos-admin-visto.test.ts", "lib/cms/texto-campo.test.ts", "lib/cms/validar-landing.test.ts", "lib/instagram-embed.test.ts", "lib/instagram-og.test.ts"]
 }

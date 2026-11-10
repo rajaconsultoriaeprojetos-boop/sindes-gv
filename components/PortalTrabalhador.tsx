@@ -8,6 +8,8 @@ import { prepararArquivoTrabalhador } from "@/lib/arquivo-cliente";
 import { formatarCpfDigitando } from "@/lib/cpf";
 import {
   DESCRICAO_TIPO_AGENDAMENTO,
+  DESTINO_TIPO_AGENDAMENTO,
+  MODALIDADE_TIPO_AGENDAMENTO,
   ROTULO_TIPO_AGENDAMENTO,
   exigeValidacaoDocumentos,
   tipoAgendamentoValido,
@@ -47,12 +49,27 @@ export default function PortalTrabalhador() {
   const [tentouAvancarDados, setTentouAvancarDados] = useState(false);
   const [errosDocumentos, setErrosDocumentos] = useState<{ contracheque?: string; documento?: string }>({});
   const [enviando, setEnviando] = useState(false);
+  const [metaHorarios, setMetaHorarios] = useState<{
+    resumo: string;
+    destino: string;
+    modalidade: string;
+  } | null>(null);
+  const [avisoSlots, setAvisoSlots] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState<{
+    id: string;
     inicio: string;
     aguardandoValidacao: boolean;
     googleMeetLink?: string | null;
     tipo?: TipoAgendamento;
+    avisoGoogle?: string | null;
   } | null>(null);
+
+  useEffect(() => {
+    if (tipoInicial && tipoAgendamentoValido(tipoInicial)) {
+      setPasso(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- abre direto no passo certo quando a URL traz ?tipo=
+  }, []);
 
   useEffect(() => {
     if (tipo !== "voucher") return;
@@ -67,13 +84,23 @@ export default function PortalTrabalhador() {
     setErro("");
     try {
       const resposta = await fetch(`/api/agendamento/slots?tipo=${encodeURIComponent(tipoAtual)}`);
-      const dados = (await resposta.json().catch(() => null)) as { slots?: Slot[]; erro?: string } | null;
+      const dados = (await resposta.json().catch(() => null)) as {
+        slots?: Slot[];
+        erro?: string;
+        horarios?: { resumo: string; destino: string; modalidade: string };
+        avisoVazio?: string | null;
+        avisoMeet?: string | null;
+      } | null;
       if (!resposta.ok) {
         setErro(dados?.erro ?? "Não foi possível carregar horários.");
         setSlots([]);
+        setMetaHorarios(null);
+        setAvisoSlots(null);
         return;
       }
       setSlots(dados?.slots ?? []);
+      setMetaHorarios(dados?.horarios ?? null);
+      setAvisoSlots(dados?.avisoVazio ?? dados?.avisoMeet ?? null);
     } finally {
       setCarregandoSlots(false);
     }
@@ -198,6 +225,7 @@ export default function PortalTrabalhador() {
 
       const resposta = await fetch("/api/agendamento", { method: "POST", body: formulario });
       const dados = (await resposta.json().catch(() => null)) as {
+        id?: string;
         inicio?: string;
         aguardandoValidacao?: boolean;
         googleMeetLink?: string | null;
@@ -211,12 +239,13 @@ export default function PortalTrabalhador() {
         return;
       }
       setSucesso({
+        id: dados.id ?? "",
         inicio: dados.inicio,
         aguardandoValidacao: Boolean(dados.aguardandoValidacao),
         googleMeetLink: dados.googleMeetLink ?? null,
         tipo: dados.tipo,
+        avisoGoogle: dados.avisoGoogle ?? null,
       });
-      if (dados.avisoGoogle) setErro("");
     } catch (causa) {
       setErro(causa instanceof Error ? causa.message : "Não foi possível confirmar.");
     } finally {
@@ -269,7 +298,15 @@ export default function PortalTrabalhador() {
                     onClick={() => escolherTipo(item)}
                     className="rounded-xl border border-slate-200 bg-white p-5 text-left transition hover:border-[#5D25AA] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5D25AA]"
                   >
-                    <p className="text-lg font-semibold">{ROTULO_TIPO_AGENDAMENTO[item]}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-lg font-semibold">{ROTULO_TIPO_AGENDAMENTO[item]}</p>
+                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+                        {DESTINO_TIPO_AGENDAMENTO[item]}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-[#5D25AA]">
+                      {MODALIDADE_TIPO_AGENDAMENTO[item]}
+                    </p>
                     <p className="mt-2 text-sm leading-6 text-slate-600">{DESCRICAO_TIPO_AGENDAMENTO[item]}</p>
                   </button>
                 ))}
@@ -392,10 +429,19 @@ export default function PortalTrabalhador() {
             {passo === 2 && tipo ? (
               <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
                 <p className="text-base font-semibold">Horários disponíveis</p>
-                <p className="mt-1 text-sm text-slate-600">Segunda a sexta, manhã e tarde (horário de Governador Valadares).</p>
+                <p className="mt-1 text-sm text-slate-600">
+                  {metaHorarios?.resumo ?? "Carregando grade de horários…"}
+                  {metaHorarios?.modalidade ? ` · ${metaHorarios.modalidade}` : null}
+                </p>
                 {carregandoSlots ? <p className="mt-4 text-sm">Carregando…</p> : null}
                 {!carregandoSlots && slots.length === 0 ? (
-                  <p className="mt-4 text-sm text-slate-600">Não há horários livres nos próximos dias. Tente mais tarde ou ligue para a sede.</p>
+                  <div className="mt-4 space-y-2 text-sm text-slate-700" role="status">
+                    <p>{avisoSlots ?? "Não há horários livres na grade atual."}</p>
+                    <p className="text-slate-600">
+                      Os horários vêm deste servidor (não dependem do Google para listar). Se o problema persistir, ligue
+                      para a sede ou tente outro tipo de serviço.
+                    </p>
+                  </div>
                 ) : (
                   <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                     {slots.slice(0, 40).map((slot) => (
@@ -422,6 +468,11 @@ export default function PortalTrabalhador() {
                     ))}
                   </ul>
                 )}
+                {!carregandoSlots && slots.length > 0 && avisoSlots ? (
+                  <p className="mt-4 text-sm text-amber-900" role="status">
+                    {avisoSlots}
+                  </p>
+                ) : null}
                 {erro ? (
                   <p className="mt-4 text-base text-red-700" role="alert">
                     {erro}
@@ -478,6 +529,11 @@ export default function PortalTrabalhador() {
         ) : (
           <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5 sm:p-6" role="status">
             <p className="text-lg font-semibold">Agendamento confirmado</p>
+            {sucesso.id ? (
+              <p className="mt-2 font-mono text-sm text-slate-700">
+                Protocolo: <span className="font-semibold text-[#5D25AA]">{sucesso.id}</span>
+              </p>
+            ) : null}
             <p className="mt-3 text-base leading-7 text-slate-600">
               Reservamos{" "}
               {new Intl.DateTimeFormat("pt-BR", { dateStyle: "full", timeStyle: "short" }).format(new Date(sucesso.inicio))}.
@@ -503,8 +559,13 @@ export default function PortalTrabalhador() {
             ) : null}
             {sucesso.tipo === "juridico" && !sucesso.googleMeetLink ? (
               <p className="mt-3 text-sm text-amber-800">
-                O link do Meet será enviado após a validação ou estará no convite da agenda do sindicato.
+                {sucesso.avisoGoogle
+                  ? sucesso.avisoGoogle
+                  : "O link do Meet será enviado após a validação ou estará no convite da agenda do sindicato."}
               </p>
+            ) : null}
+            {sucesso.avisoGoogle && sucesso.tipo !== "juridico" ? (
+              <p className="mt-3 text-sm text-amber-800">{sucesso.avisoGoogle}</p>
             ) : null}
             <Link href="/" className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#FCB065] px-4 text-base font-semibold text-[#1D0D2C]">
               Voltar ao início

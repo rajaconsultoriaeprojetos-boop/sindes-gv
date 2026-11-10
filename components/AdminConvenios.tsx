@@ -12,6 +12,7 @@ import PainelShell from "@/components/PainelShell";
 import RepositorioDocumentos, { type ItemRepositorio } from "@/components/RepositorioDocumentos";
 import type { PapelUsuario } from "@/lib/rbac/roles";
 import { CATEGORIAS, type CategoriaId } from "@/lib/convenios-publico";
+import { PLANTAO } from "@/components/landing/plantao-theme";
 
 type Parceiro = {
   id: string;
@@ -87,6 +88,9 @@ export default function AdminConvenios() {
   const [repositorio, setRepositorio] = useState<ItemRepositorio[]>([]);
   const [emailUsuario, setEmailUsuario] = useState("");
   const [papelUsuario, setPapelUsuario] = useState<PapelUsuario | null>(null);
+  const [novosAgendamentos, setNovosAgendamentos] = useState(0);
+
+  const indicadorAdmin = papelUsuario === "admin" || papelUsuario === "superadmin";
 
   function limparDados() {
     setLiberado(false);
@@ -155,6 +159,18 @@ export default function AdminConvenios() {
       vivo = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!liberado || !indicadorAdmin) return;
+    void fetch("/api/admin/agendamentos")
+      .then(async (resposta) => {
+        const dados = (await resposta.json().catch(() => null)) as { novosPendentes?: number } | null;
+        if (resposta.ok && typeof dados?.novosPendentes === "number") {
+          setNovosAgendamentos(dados.novosPendentes);
+        }
+      })
+      .catch(() => undefined);
+  }, [liberado, indicadorAdmin]);
 
   function cabecalho() {
     return { "content-type": "application/json" };
@@ -306,10 +322,27 @@ export default function AdminConvenios() {
           {aviso}
         </p>
       ) : null}
+      {indicadorAdmin && novosAgendamentos > 0 ? (
+        <p
+          className="mb-6 rounded-xl border-2 px-4 py-3 text-base font-semibold text-[#0E3A43]"
+          style={{ borderColor: PLANTAO.amber, backgroundColor: "rgba(242, 162, 12, 0.18)" }}
+          role="status"
+        >
+          <a href="#agendamentos-admin" className="underline decoration-[#F2A20C] underline-offset-2">
+            {novosAgendamentos} agendamento{novosAgendamentos === 1 ? "" : "s"} novo
+            {novosAgendamentos === 1 ? "" : "s"}
+          </a>
+          {" — desça até a seção Agendamentos abaixo."}
+        </p>
+      ) : null}
       <div className="space-y-12">
             <GestaoUsuarios />
             <AdminCmsLanding role={papelUsuario} email={emailUsuario} />
-            <ListaAgendamentos autenticado={liberado} />
+            <ListaAgendamentos
+              autenticado={liberado}
+              indicadorAdmin={indicadorAdmin}
+              onNovosPendentes={setNovosAgendamentos}
+            />
             <GestaoGoogleSheets />
             <RepositorioDocumentos
               titulo="Repositório de documentos"

@@ -35,6 +35,19 @@ import {
 } from "@/components/landing/plantao-theme";
 import { SINDES_WHATSAPP_URL } from "@/lib/whatsapp-sindes";
 import { SINDES_ENDERECO } from "@/lib/endereco-sindes";
+import {
+  DESCRICAO_TIPO_AGENDAMENTO,
+  MODALIDADE_TIPO_AGENDAMENTO,
+  ROTULO_TIPO_AGENDAMENTO,
+  type TipoAgendamento,
+} from "@/lib/tipos-agendamento";
+
+const AGENDAMENTO_PORTAL: { tipo: TipoAgendamento; href: string }[] = [
+  { tipo: "juridico", href: "/portal?tipo=juridico" },
+  { tipo: "presencial", href: "/portal?tipo=presencial" },
+  { tipo: "homologacao", href: "/portal?tipo=homologacao" },
+  { tipo: "voucher", href: "/portal?tipo=voucher" },
+];
 
 const NAV = [
   { href: "#inicio", rotulo: "Início" },
@@ -109,14 +122,6 @@ export default function SindesLanding({ cms }: Props) {
   const [menuAberto, setMenuAberto] = useState(false);
   const [servicoModal, setServicoModal] = useState<ServicoModal>(null);
 
-  const [nome, setNome] = useState("");
-  const [contato, setContato] = useState("");
-  const [tema, setTema] = useState("Rescisão e verbas");
-  const [relatoAgenda, setRelatoAgenda] = useState("");
-  const [consentimento, setConsentimento] = useState(false);
-  const [erroAgenda, setErroAgenda] = useState("");
-  const [protocoloAgenda, setProtocoloAgenda] = useState("");
-
   const [categoria, setCategoria] = useState("Atraso de salário ou verbas");
   const [relatoDenuncia, setRelatoDenuncia] = useState("");
   const [semDadosDeSaude, setSemDadosDeSaude] = useState(false);
@@ -135,28 +140,6 @@ export default function SindesLanding({ cms }: Props) {
       window.removeEventListener("keydown", fechar);
     };
   }, [menuAberto, servicoModal]);
-
-  function enviarAgenda(event: FormEvent) {
-    event.preventDefault();
-    if (nome.trim().length < 3) {
-      setErroAgenda("Informe seu nome para o retorno.");
-      return;
-    }
-    if (contato.trim().length < 6) {
-      setErroAgenda("Informe um e-mail ou telefone para a equipe retornar.");
-      return;
-    }
-    if (relatoAgenda.trim().length < 10) {
-      setErroAgenda("Descreva o assunto em pelo menos uma frase.");
-      return;
-    }
-    if (!consentimento) {
-      setErroAgenda("Marque o consentimento para registrar o pedido nesta tela.");
-      return;
-    }
-    setErroAgenda("");
-    setProtocoloAgenda(protocoloLocal("ATD"));
-  }
 
   function enviarDenuncia(event: FormEvent) {
     event.preventDefault();
@@ -546,8 +529,8 @@ export default function SindesLanding({ cms }: Props) {
               </p>
               <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Portal, plantão e denúncia</h2>
               <p className="mt-4 max-w-3xl text-lg leading-8 text-[#0E3A43]/75 sm:text-xl sm:leading-9">
-                Atendimento identificado no portal (persiste neste servidor). Agendamento rápido e denúncia
-                anônima nesta página, em superfícies amplas e tranquilas.
+                Agendamento com data, horário e protocolo real ficam no portal do trabalhador. Nesta página,
+                a denúncia anônima continua apenas local (não envia ao servidor) até o canal oficial existir.
               </p>
               <Link
                 href="/portal"
@@ -564,114 +547,33 @@ export default function SindesLanding({ cms }: Props) {
                   tabIndex={-1}
                   className={`scroll-mt-24 ${glassCard} p-6 sm:p-8`}
                 >
-                  <h3 className="text-2xl font-semibold">Agendar atendimento jurídico</h3>
+                  <h3 className="text-2xl font-semibold">Agendar atendimento</h3>
                   <p className="mt-3 text-base leading-7 text-[#0E3A43]/70 sm:text-lg sm:leading-8">
                     Sede: {SINDES_ENDERECO.logradouro}, {SINDES_ENDERECO.cidadeUf} (CEP {SINDES_ENDERECO.cep}).
-                    Atendimento presencial em dias úteis; para fila oficial com validação, use o portal.
+                    Escolha o tipo abaixo — você será levado ao portal, onde informa dados, documentos (quando
+                    necessário), data e horário. O protocolo é gerado no servidor ao confirmar.
                   </p>
-                  <Link
-                    href="/atendimento"
-                    className="mt-3 inline-flex min-h-11 items-center font-semibold text-[#1F8A70] underline decoration-2 underline-offset-4"
-                  >
-                    Abrir ambiente de atendimento
-                  </Link>
-                  {protocoloAgenda ? (
-                    <div className="mt-6 rounded-xl border border-[#1F8A70]/20 bg-white/90 p-5" role="status">
-                      <p className="text-sm font-semibold">Pedido registrado nesta tela</p>
-                      <p className="mt-2 text-2xl font-bold tracking-tight">{protocoloAgenda}</p>
-                      <p className="mt-3 text-base leading-7 text-[#0E3A43]/70 sm:text-lg sm:leading-8">
-                        Nenhum dado foi enviado. Feche a aba e o protocolo some. Quando o canal oficial
-                        estiver no ar, um atendente poderá retornar de fato.
-                      </p>
-                      <button
-                        type="button"
-                        className="mt-4 text-sm font-semibold text-[#1F8A70]"
-                        onClick={() => {
-                          setProtocoloAgenda("");
-                          setNome("");
-                          setContato("");
-                          setRelatoAgenda("");
-                          setConsentimento(false);
-                        }}
-                      >
-                        Fazer outro pedido
-                      </button>
-                    </div>
-                  ) : (
-                    <form className="mt-6 space-y-4" onSubmit={enviarAgenda} noValidate>
-                      <div>
-                        <label className={rotuloClasse} htmlFor="nome">
-                          Nome
-                        </label>
-                        <input
-                          id="nome"
-                          className={campoClasse}
-                          autoComplete="name"
-                          value={nome}
-                          onChange={(e) => setNome(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className={rotuloClasse} htmlFor="retorno">
-                          E-mail ou telefone
-                        </label>
-                        <input
-                          id="retorno"
-                          className={campoClasse}
-                          autoComplete="tel"
-                          value={contato}
-                          onChange={(e) => setContato(e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className={rotuloClasse} htmlFor="tema">
-                          Tema
-                        </label>
-                        <select
-                          id="tema"
-                          className={campoClasse}
-                          value={tema}
-                          onChange={(e) => setTema(e.target.value)}
+                  <ul className="mt-6 space-y-3">
+                    {AGENDAMENTO_PORTAL.map(({ tipo, href }) => (
+                      <li key={tipo}>
+                        <Link
+                          href={href}
+                          className={`${glassCard} flex min-h-11 flex-col gap-1 border border-[#1F8A70]/15 bg-white/95 p-4 transition hover:border-[#1F8A70]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F8A70]`}
                         >
-                          <option>Rescisão e verbas</option>
-                          <option>Homologação</option>
-                          <option>Assédio ou jornada</option>
-                          <option>Convenção coletiva</option>
-                          <option>Outro assunto</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className={rotuloClasse} htmlFor="relato-agenda">
-                          O que aconteceu
-                        </label>
-                        <textarea
-                          id="relato-agenda"
-                          className="min-h-32 w-full rounded-xl border border-[rgba(14,58,67,0.18)] bg-white/90 px-3.5 py-3 text-sm shadow-sm"
-                          maxLength={2000}
-                          value={relatoAgenda}
-                          onChange={(e) => setRelatoAgenda(e.target.value)}
-                        />
-                      </div>
-                      <label className="flex items-start gap-2 text-sm leading-6 text-[#0E3A43]/80">
-                        <input
-                          type="checkbox"
-                          className="mt-1 h-4 w-4 rounded border-[#0E3A43]/30"
-                          checked={consentimento}
-                          onChange={(e) => setConsentimento(e.target.checked)}
-                        />
-                        Autorizo o uso do nome e do contato só para este pedido. Sei que, nesta versão,
-                        nada é enviado a um servidor.
-                      </label>
-                      {erroAgenda ? (
-                        <p className="text-sm text-red-700" role="alert">
-                          {erroAgenda}
-                        </p>
-                      ) : null}
-                      <button type="submit" className={btnPrimary}>
-                        Registrar pedido
-                      </button>
-                    </form>
-                  )}
+                          <span className="text-base font-semibold text-[#0E3A43]">
+                            {ROTULO_TIPO_AGENDAMENTO[tipo]}
+                          </span>
+                          <span className="text-xs font-semibold uppercase tracking-wide text-[#1F8A70]">
+                            {MODALIDADE_TIPO_AGENDAMENTO[tipo]}
+                          </span>
+                          <span className="text-sm leading-6 text-[#0E3A43]/70">{DESCRICAO_TIPO_AGENDAMENTO[tipo]}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link href="/portal" className={`${btnPrimary} mt-6 inline-flex min-h-11 w-full justify-center sm:w-auto`}>
+                    Ver todos os serviços no portal
+                  </Link>
                 </article>
               </ScrollReveal>
 
