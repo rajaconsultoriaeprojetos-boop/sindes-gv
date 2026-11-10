@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -H 0.0.0.0 -p 43123",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test lib/rescisao.test.ts lib/trct.test.ts lib/auditoria.test.ts lib/consistencia-interna-trct.test.ts lib/mesclar-leitura-trct.test.ts lib/atendimento.test.ts lib/convenios.test.ts lib/sessao.test.ts lib/validacao.test.ts lib/cms/texto-campo.test.ts lib/cms/validar-landing.test.ts"
+    "test": "node --experimental-strip-types --test lib/rescisao.test.ts lib/trct.test.ts lib/auditoria.test.ts lib/consistencia-interna-trct.test.ts lib/mesclar-leitura-trct.test.ts lib/atendimento.test.ts lib/convenios.test.ts lib/sessao.test.ts lib/validacao.test.ts lib/cms/texto-campo.test.ts lib/cms/validar-landing.test.ts lib/instagram-embed.test.ts lib/instagram-og.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",

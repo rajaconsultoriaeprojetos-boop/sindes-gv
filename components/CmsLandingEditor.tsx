@@ -23,6 +23,8 @@ import {
   preferirRascunhoLocal,
 } from "@/lib/cms/rascunho-landing-local";
 import { mensagemErroRespostaApi } from "@/lib/cms/resposta-api";
+import VideoDestaquePreview from "@/components/landing/VideoDestaquePreview";
+import { urlVideoDestaqueValida } from "@/lib/instagram-embed";
 import type { PapelUsuario } from "@/lib/rbac/roles";
 
 type Props = {
@@ -375,8 +377,8 @@ export default function CmsLandingEditor({ role, email }: Props) {
           )}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-[#0E3A43]/75">
-          Edite na mesma ordem em que o visitante vê o site. Campos com aviso de confirmação aparecem com badge{" "}
-          <strong>[CONFIRMAR]</strong> até a diretoria validar o número ou texto.
+          Comece pelo <strong>vídeo do dia</strong> se for atualizar o Instagram na home. Campos com aviso de confirmação
+          mostram badge <strong>[CONFIRMAR]</strong> até a diretoria validar.
         </p>
       </div>
 
@@ -488,6 +490,134 @@ export default function CmsLandingEditor({ role, email }: Props) {
 
       <Secao
         ordem={2}
+        defaultOpen
+        titulo="Vídeo do dia — destaque na home"
+        descricao="Bloco grande no topo da seção Notícias (#noticias). O visitante vê a capa e abre o reel no Instagram — sem player embutido."
+      >
+        {(() => {
+          const v = dados.videoDestaque;
+          const errosVd = erroLista?.lista === "videoDestaque" ? erroLista.campos : null;
+          const urlOk = v.url.trim() ? urlVideoDestaqueValida(v.url) : false;
+          return (
+            <div
+              id="video-destaque-card"
+              className={`rounded-xl border bg-white/90 p-4 ${
+                errosVd ? "border-red-400 ring-2 ring-red-200" : "border-[rgba(14,58,67,0.12)]"
+              }`}
+            >
+              <ol className="list-decimal space-y-1 pl-5 text-sm leading-relaxed text-[#0E3A43]/80">
+                <li>No Instagram, abra o reel ou post e copie o link (Compartilhar → Copiar link).</li>
+                <li>Cole abaixo em <strong>Link do reel</strong>. A prévia mostra como ficará na home.</li>
+                <li>Clique em <strong>Publicar alterações</strong> no rodapé desta página.</li>
+              </ol>
+              <p className="mt-3 text-xs text-[#0E3A43]/60">
+                Para tirar o vídeo da home, apague o link e publique. Também aceita URL HTTPS de arquivo{" "}
+                <code className="text-xs">.mp4</code> (vídeo direto no site).
+              </p>
+              <label className={`${rotuloClasse} mt-4`} htmlFor="vd-url">
+                Link do reel (copie do Instagram)
+              </label>
+              <input
+                id="vd-url"
+                type="url"
+                className={`${campoClasse} text-base ${errosVd?.url ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                value={v.url}
+                placeholder="https://www.instagram.com/reel/…"
+                onChange={(e) =>
+                  atualizar((p) => ({
+                    ...p,
+                    videoDestaque: { ...p.videoDestaque, url: e.target.value },
+                  }))
+                }
+              />
+              {errosVd?.url ? <p className="mt-1 text-sm text-red-800">{errosVd.url}</p> : null}
+              {urlOk ? (
+                <div className="mt-4">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#1F8A70]">
+                    Prévia na home
+                  </p>
+                  <VideoDestaquePreview
+                    url={v.url}
+                    titulo={v.titulo}
+                    data={v.data}
+                    legenda={v.legenda}
+                    confirmar={v.confirmar}
+                    compacto
+                  />
+                </div>
+              ) : v.url.trim() ? (
+                <p className="mt-2 text-sm text-amber-900/90">
+                  Link inválido — use um reel/post do Instagram ou um .mp4 em HTTPS.
+                </p>
+              ) : null}
+              <details className="mt-4 rounded-xl border border-[rgba(14,58,67,0.1)] bg-[#F7FAF9]/80 px-3 py-2">
+                <summary className="cursor-pointer text-sm font-semibold text-[#0E3A43]">
+                  Título, data e legenda (opcional)
+                </summary>
+                <label className={`${rotuloClasse} mt-3`} htmlFor="vd-tit">
+                  Título acima do vídeo
+                </label>
+                <input
+                  id="vd-tit"
+                  className={`${campoClasse} ${errosVd?.titulo ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                  value={v.titulo}
+                  onChange={(e) =>
+                    atualizar((p) => ({
+                      ...p,
+                      videoDestaque: { ...p.videoDestaque, titulo: e.target.value },
+                    }))
+                  }
+                />
+                {errosVd?.titulo ? <p className="mt-1 text-sm text-red-800">{errosVd.titulo}</p> : null}
+                <label className={`${rotuloClasse} mt-3`} htmlFor="vd-data">
+                  Data ou rótulo (ex.: 10/11/2026)
+                </label>
+                <input
+                  id="vd-data"
+                  className={`${campoClasse} ${errosVd?.data ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                  value={v.data}
+                  onChange={(e) =>
+                    atualizar((p) => ({
+                      ...p,
+                      videoDestaque: { ...p.videoDestaque, data: e.target.value },
+                    }))
+                  }
+                />
+                {errosVd?.data ? <p className="mt-1 text-sm text-red-800">{errosVd.data}</p> : null}
+                <label className={`${rotuloClasse} mt-3`} htmlFor="vd-leg">
+                  Legenda abaixo do vídeo
+                </label>
+                <textarea
+                  id="vd-leg"
+                  rows={3}
+                  className={`${campoClasse} min-h-[4rem] py-2 ${errosVd?.legenda ? "border-red-500 ring-1 ring-red-300" : ""}`}
+                  value={v.legenda}
+                  onChange={(e) =>
+                    atualizar((p) => ({
+                      ...p,
+                      videoDestaque: { ...p.videoDestaque, legenda: e.target.value },
+                    }))
+                  }
+                />
+                {errosVd?.legenda ? <p className="mt-1 text-sm text-red-800">{errosVd.legenda}</p> : null}
+              </details>
+              <CheckboxConfirmar
+                idFor="vd-conf"
+                checked={!!v.confirmar}
+                onChange={(marcado) =>
+                  atualizar((p) => ({
+                    ...p,
+                    videoDestaque: { ...p.videoDestaque, confirmar: marcado },
+                  }))
+                }
+              />
+            </div>
+          );
+        })()}
+      </Secao>
+
+      <Secao
+        ordem={3}
         titulo="Linha do tempo de conquistas"
         descricao='Seção "Quem somos e por que confiar" — lista cronológica à esquerda.'
       >
@@ -579,7 +709,7 @@ export default function CmsLandingEditor({ role, email }: Props) {
       </Secao>
 
       <Secao
-        ordem={3}
+        ordem={4}
         titulo="Depoimentos"
         descricao='Três cartões de citação na mesma seção "Quem somos", logo após a linha do tempo.'
       >
@@ -670,9 +800,9 @@ export default function CmsLandingEditor({ role, email }: Props) {
       </Secao>
 
       <Secao
-        ordem={4}
+        ordem={5}
         titulo="Destaques de CCT (hospitais)"
-        descricao='Seção "Notícias, CCT e Sindes News" — cards grandes com piso, adicionais e jornada por hospital.'
+        descricao='Na seção Notícias — cards grandes com piso, adicionais e jornada por hospital (abaixo do vídeo do dia).'
       >
         <ul className="space-y-4">
           {dados.destaquesCct.map((cct, i) => {
@@ -796,109 +926,14 @@ export default function CmsLandingEditor({ role, email }: Props) {
       </Secao>
 
       <Secao
-        ordem={5}
-        titulo="Vídeo do dia"
-        descricao='Destaque embutido no topo da seção Notícias na landing — acima do grid de CCT e do feed.'
-      >
-        {(() => {
-          const v = dados.videoDestaque;
-          const errosVd = erroLista?.lista === "videoDestaque" ? erroLista.campos : null;
-          return (
-            <div
-              id="video-destaque-card"
-              className={`rounded-xl border bg-white/90 p-4 ${
-                errosVd ? "border-red-400 ring-2 ring-red-200" : "border-[rgba(14,58,67,0.12)]"
-              }`}
-            >
-              <p className="text-sm text-[#0E3A43]/75">
-                Cole o link de um reel ou post do Instagram, ou uma URL HTTPS de arquivo <code className="text-xs">.mp4</code>.
-                Deixe o link vazio para não exibir vídeo na página inicial.
-              </p>
-              <label className={`${rotuloClasse} mt-4`} htmlFor="vd-url">
-                URL do vídeo (Instagram ou MP4)
-              </label>
-              <input
-                id="vd-url"
-                type="url"
-                className={`${campoClasse} ${errosVd?.url ? "border-red-500 ring-1 ring-red-300" : ""}`}
-                value={v.url}
-                placeholder="https://www.instagram.com/reel/… ou https://…/video.mp4"
-                onChange={(e) =>
-                  atualizar((p) => ({
-                    ...p,
-                    videoDestaque: { ...p.videoDestaque, url: e.target.value },
-                  }))
-                }
-              />
-              {errosVd?.url ? <p className="mt-1 text-sm text-red-800">{errosVd.url}</p> : null}
-              <label className={`${rotuloClasse} mt-3`} htmlFor="vd-tit">
-                Título (opcional)
-              </label>
-              <input
-                id="vd-tit"
-                className={`${campoClasse} ${errosVd?.titulo ? "border-red-500 ring-1 ring-red-300" : ""}`}
-                value={v.titulo}
-                onChange={(e) =>
-                  atualizar((p) => ({
-                    ...p,
-                    videoDestaque: { ...p.videoDestaque, titulo: e.target.value },
-                  }))
-                }
-              />
-              {errosVd?.titulo ? <p className="mt-1 text-sm text-red-800">{errosVd.titulo}</p> : null}
-              <label className={`${rotuloClasse} mt-3`} htmlFor="vd-data">
-                Data ou rótulo (opcional)
-              </label>
-              <input
-                id="vd-data"
-                className={`${campoClasse} ${errosVd?.data ? "border-red-500 ring-1 ring-red-300" : ""}`}
-                value={v.data}
-                onChange={(e) =>
-                  atualizar((p) => ({
-                    ...p,
-                    videoDestaque: { ...p.videoDestaque, data: e.target.value },
-                  }))
-                }
-              />
-              {errosVd?.data ? <p className="mt-1 text-sm text-red-800">{errosVd.data}</p> : null}
-              <label className={`${rotuloClasse} mt-3`} htmlFor="vd-leg">
-                Legenda abaixo do vídeo (opcional)
-              </label>
-              <textarea
-                id="vd-leg"
-                rows={3}
-                className={`${campoClasse} min-h-[4rem] py-2 ${errosVd?.legenda ? "border-red-500 ring-1 ring-red-300" : ""}`}
-                value={v.legenda}
-                onChange={(e) =>
-                  atualizar((p) => ({
-                    ...p,
-                    videoDestaque: { ...p.videoDestaque, legenda: e.target.value },
-                  }))
-                }
-              />
-              {errosVd?.legenda ? <p className="mt-1 text-sm text-red-800">{errosVd.legenda}</p> : null}
-              <CheckboxConfirmar
-                idFor="vd-conf"
-                checked={!!v.confirmar}
-                onChange={(marcado) =>
-                  atualizar((p) => ({
-                    ...p,
-                    videoDestaque: { ...p.videoDestaque, confirmar: marcado },
-                  }))
-                }
-              />
-            </div>
-          );
-        })()}
-      </Secao>
-
-      <Secao
         ordem={6}
-        titulo="Feed de notícias"
-        descricao='Mesma seção de notícias — cartões menores com link "Ver no Instagram" ou outra URL.'
+        titulo="Feed de notícias (cartões menores)"
+        descricao="Lista abaixo do vídeo do dia e dos CCTs — cada cartão tem botão para abrir um link."
       >
-        <p className="mb-4 text-xs text-[#0E3A43]/60">
-          Link sugerido para posts: {INSTAGRAM_PERFIL}
+        <p className="mb-4 text-sm leading-relaxed text-[#0E3A43]/75">
+          <strong>Diferença:</strong> o <em>vídeo do dia</em> (bloco 2) é o destaque grande no topo. Aqui são avisos
+          curtos. Se o tipo for <strong>Vídeo / Sindes News</strong>, use o mesmo link do reel no campo{" "}
+          <strong>Link do botão</strong>. Perfil geral: {INSTAGRAM_PERFIL}
         </p>
         <ul className="space-y-4">
           {dados.noticias.map((n, i) => {
@@ -992,15 +1027,20 @@ export default function CmsLandingEditor({ role, email }: Props) {
                 {n.resumo.length.toLocaleString("pt-BR")} / {MAX_RESUMO_NOTICIA.toLocaleString("pt-BR")} caracteres
               </p>
               {errosNot?.resumo ? <p className="mt-1 text-sm text-red-800">{errosNot.resumo}</p> : null}
+              {n.tipo === "video" ? (
+                <p className="mt-3 text-xs leading-relaxed text-[#1F8A70]">
+                  Tipo vídeo: cole aqui o link do reel/post (o mesmo que no vídeo do dia, se for o mesmo conteúdo).
+                </p>
+              ) : null}
               <label className={`${rotuloClasse} mt-3`} htmlFor={`not-href-${i}`}>
-                Link do botão (https://… ou /caminho interno)
+                Link do botão (reel do Instagram ou outra URL)
               </label>
               <input
                 id={`not-href-${i}`}
                 className={`${campoClasse} ${errosNot?.href ? "border-red-500 ring-1 ring-red-300" : ""}`}
                 inputMode="url"
                 value={n.href}
-                placeholder={INSTAGRAM_PERFIL}
+                placeholder={n.tipo === "video" ? "https://www.instagram.com/reel/…" : INSTAGRAM_PERFIL}
                 onChange={(e) =>
                   atualizar((p) => {
                     const noticias = [...p.noticias];
