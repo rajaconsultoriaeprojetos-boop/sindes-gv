@@ -1,10 +1,15 @@
 import type { TipoAgendamento } from "./tipos-agendamento";
 import { duracaoMinutos } from "./tipos-agendamento";
+import {
+  FUSO_AGENDAMENTO,
+  blocosParaTipo,
+  diaPermitidoParaTipo,
+  minutosFimBloco,
+  minutosInicioBloco,
+  resumoHorariosTipo,
+} from "./agendamento-horarios";
 
-const FUSO = "America/Sao_Paulo";
-
-/** Seg–sex 13h–17h; jurídico apenas sexta (Governador Valadares). */
-const TARDE = { inicioH: 13, fimH: 17 };
+const FUSO = FUSO_AGENDAMENTO;
 
 function partesDataLocal(iso: string) {
   const data = new Date(iso);
@@ -61,12 +66,6 @@ function minutosDesdeMeiaNoite(hora: number, minuto: number) {
   return hora * 60 + minuto;
 }
 
-function diaPermitido(dow: number, tipo: TipoAgendamento) {
-  if (dow === 0 || dow === 6) return false;
-  if (tipo === "juridico") return dow === 5;
-  return dow >= 1 && dow <= 5;
-}
-
 function gerarSlotsDia(
   ano: number,
   mes: number,
@@ -76,15 +75,15 @@ function gerarSlotsDia(
   tipo: TipoAgendamento,
 ) {
   const dow = diaSemanaLocal(ano, mes, dia);
-  if (!diaPermitido(dow, tipo)) return [] as SlotDisponivel[];
+  if (!diaPermitidoParaTipo(dow, tipo)) return [] as SlotDisponivel[];
 
-  const blocos = [TARDE];
+  const blocos = blocosParaTipo(tipo);
   const slots: SlotDisponivel[] = [];
   const agora = agoraLocal();
 
   for (const bloco of blocos) {
-    const inicioBloco = bloco.inicioH * 60;
-    const fimBloco = bloco.fimH * 60;
+    const inicioBloco = minutosInicioBloco(bloco);
+    const fimBloco = minutosFimBloco(bloco);
     for (let min = inicioBloco; min + duracao <= fimBloco; min += duracao) {
       const hora = Math.floor(min / 60);
       const minuto = min % 60;
@@ -147,4 +146,19 @@ export function slotAindaDisponivel(
 ) {
   const slots = listarSlotsDisponiveis(tipo, ocupados, 21);
   return slots.some((s) => s.inicio === inicio && s.fim === fim);
+}
+
+/** Mensagem para o portal quando a lista de slots vem vazia. */
+export function explicarSlotsVazios(tipo: TipoAgendamento, ocupados: { inicio: string; fim: string }[]) {
+  const resumo = resumoHorariosTipo(tipo);
+  const livresSemFila = listarSlotsDisponiveis(tipo, [], 21).length;
+  const livresComFila = listarSlotsDisponiveis(tipo, ocupados, 21).length;
+
+  if (livresSemFila === 0) {
+    return `Não há horários nesta janela. Grade: ${resumo}. Volte em outro dia ou ligue para a sede.`;
+  }
+  if (livresComFila === 0) {
+    return `Todos os horários da grade já estão reservados (${resumo}). Tente outra semana ou fale com a sede.`;
+  }
+  return `Não há horários livres (${resumo}).`;
 }
